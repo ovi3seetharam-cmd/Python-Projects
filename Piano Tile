@@ -1,0 +1,85 @@
+import pygame
+import random
+from Objects import Tiles
+
+
+# imports the library and functions of pygame
+
+pygame.init()
+SCREEN = WIDTH, HEIGHT = 374, 529
+# sets the width and height of the game
+
+info = pygame.display.Info()
+width = info.current_w
+height = info.current_h
+
+# piano_tiles_bgimg = "C:\\Users\\Oviyathamarai\\Downloads\\piano tiles pics\\piano tiles background.png"
+# When writing out a directory you must use // in this direction ->
+tiledash_bgimg = "C://Users//Oviyathamarai//PycharmProjects//TileDash//Pictures needed//PianoTiles.MAINBG.png"
+# The games background image
+
+
+
+if width >= height:
+    win = pygame.display.set_mode(SCREEN, pygame.NOFRAME)
+else:
+    win = pygame.display.set_mode(SCREEN, pygame.NOFRAME | pygame.SCALED | pygame.FULLSCREEN)
+
+clock = pygame.time.Clock()
+FPS = 20
+# determines how many frames will be updated per second
+# taking constant speed as the FPS
+bg_img = pygame.image.load(tiledash_bgimg)
+# loads the background image of the game to the terminal output
+bg_img = pygame.transform.scale(bg_img, (WIDTH, HEIGHT))
+# transforms (resizes) the background image in scale to the given width and height of the screen
+pygame.draw.line(bg_img,(64,224,208),(0,397),(WIDTH,397),5)
+
+tileTest = Tiles(0,10,win)
+
+startpos_Tile = [(0,0),(93,0),(187,0),(280,0)]
+spawnList = []
+#while (len(spawnList) < 15):
+SPAWN_TILE = pygame.USEREVENT + 1
+pygame.time.set_timer(SPAWN_TILE, 1000)
+
+
+spawn_pos = random.choice(startpos_Tile)
+
+
+
+
+# main while loop in order to continuously run the game until the use decides to end the game
+running = True
+while running:
+    win.blit(bg_img, (0, 0))  # or (20, 30) if you want offset
+    # condition to quit the game
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE or \
+                    event.key == pygame.K_q:
+                running = False
+
+        if event.type == SPAWN_TILE:
+            if len(spawnList) < 30:
+                spawn_pos = random.choice(startpos_Tile)
+                # Randomly chooses start position
+                tile = Tiles(spawn_pos[0], spawn_pos[1], win)
+                #implemented the tile class using the spawn positions onto the window
+                spawnList.append(tile)
+                #adds onto the startpos_tile till it reaches the limit
+
+    for tile in spawnList:
+        tile.update(FPS)
+    #after appending 1 tile it goes through the list and displays that specific tile and then updates
+
+
+
+    # displays when the frame needs to be updated using the method tick and update
+    clock.tick(FPS)
+    pygame.display.update()
+# game stops using the while condition that running = False so the game should quit
+pygame.quit()
